@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KARDO — Snap. Carry. Go.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080D;
+  --surface:#0C0D15;
+  --card:#10111A;
+  --border:#1A1C2C;
+  --border2:#252742;
+  --red:#E8394A;
+  --red2:#FF5566;
+  --teal:#00C9B1;
+  --gold:#F0A500;
+  --purple:#9F7DFF;
+  --white:#EDEEF5;
+  --mid:#72739A;
+  --dim:#2E2F4A;
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Syne',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth;cursor:default}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+button{cursor:pointer;font-family:var(--sans);border:none;outline:none}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* ── Nav ───────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,13,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.7rem}
+.nav-logo-icon{width:30px;height:30px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-icon svg{width:16px;height:16px;fill:#fff}
+.nav-logo-text{font-family:var(--mono);font-size:.95rem;font-weight:500;letter-spacing:.15em;color:var(--white)}
+.nav-links{display:flex;gap:2.5rem;align-items:center}
+.nav-links a{font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem 1.1rem;background:var(--red);color:#fff;border-radius:3px;transition:background .2s}
+.nav-cta:hover{background:var(--red2)}
+
+/* ── Hero ──────────────────────────────────────────── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,28,44,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(26,28,44,.6) 1px,transparent 1px);background-size:72px 72px}
+.hero-glow1{position:absolute;top:-10%;right:-5%;width:60%;height:80%;background:radial-gradient(ellipse at center,rgba(232,57,74,.14) 0%,transparent 65%)}
+.hero-glow2{position:absolute;bottom:-20%;left:-10%;width:50%;height:70%;background:radial-gradient(ellipse at center,rgba(0,201,177,.07) 0%,transparent 65%)}
+.hero-noise{position:absolute;inset:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
+.hero-content{position:relative;z-index:2;max-width:860px}
+.hero-eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:1.2rem;opacity:0;animation:fadeUp .8s .2s ease forwards}
+.hero-title{font-family:var(--serif);font-size:clamp(5rem,11vw,9rem);font-weight:700;line-height:.92;letter-spacing:.01em;margin-bottom:.4rem;opacity:0;animation:fadeUp .8s .35s ease forwards}
+.hero-title em{color:var(--red);font-style:italic}
+.hero-slogan{font-family:var(--serif);font-size:clamp(1.4rem,2.8vw,2.2rem);font-weight:400;font-style:italic;color:var(--mid);letter-spacing:.08em;margin-bottom:1.8rem;opacity:0;animation:fadeUp .8s .5s ease forwards}
+.hero-sub{display:flex;gap:1.5rem;align-items:flex-start;max-width:580px;opacity:0;animation:fadeUp .8s .5s ease forwards}
+.hero-tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--teal);text-transform:uppercase;white-space:nowrap;padding-top:.05rem;flex-shrink:0}
+.hero-desc{font-family:var(--serif);font-size:1.05rem;color:var(--mid);line-height:1.75;font-weight:400}
+.hero-chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.8rem;opacity:0;animation:fadeUp .8s .65s ease forwards}
+.chip{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.28rem .8rem;border:1px solid var(--border2);border-radius:2px;color:var(--dim);transition:all .2s}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.hero-scroll{position:absolute;bottom:2.5rem;right:3rem;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeIn 1s 1.4s ease forwards}
+.hero-scroll span{font-family:var(--mono);font-size:.52rem;letter-spacing:.22em;color:var(--dim);writing-mode:vertical-rl;text-transform:uppercase}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--red),transparent);animation:scrollPulse 2s ease-in-out infinite}
+
+/* ── Sections ──────────────────────────────────────── */
+.sec{padding:6rem 3rem;max-width:1180px;margin:0 auto}
+.sec-full{padding:6rem 0;overflow:hidden}
+.sec-full .inner{max-width:1180px;margin:0 auto;padding:0 3rem}
+hr{border:none;border-top:1px solid var(--border)}
+.eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.28em;color:var(--red);text-transform:uppercase;margin-bottom:.8rem}
+.eyebrow.teal{color:var(--teal)}
+.eyebrow.gold{color:var(--gold)}
+.sec-title{font-family:var(--serif);font-size:clamp(2.4rem,4vw,3.6rem);font-weight:700;line-height:1.02;letter-spacing:.01em;margin-bottom:1rem}
+.sec-title em{color:var(--red);font-style:italic}
+.sec-sub{font-family:var(--serif);font-size:1rem;color:var(--mid);max-width:460px;line-height:1.8}
+
+/* ── Features ──────────────────────────────────────── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.8rem}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s}
+.feat-card:hover{transform:translateY(-6px);border-color:var(--border2)}
+.feat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--red);transform:scaleY(0);transform-origin:top;transition:transform .3s}
+.feat-card:hover::before{transform:scaleY(1)}
+.feat-num{font-family:var(--serif);font-size:4.5rem;font-weight:700;font-style:italic;line-height:1;color:rgba(232,57,74,.1);margin-bottom:.5rem}
+.feat-icon{font-size:1.8rem;margin-bottom:.8rem}
+.feat-title{font-family:var(--sans);font-size:.95rem;font-weight:600;color:var(--white);margin-bottom:.4rem}
+.feat-body{font-family:var(--serif);font-size:.9rem;color:var(--mid);line-height:1.72}
+
+/* ── How it works ──────────────────────────────────── */
+.how-bg{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:3rem;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.step{background:var(--card);padding:2rem 1.6rem;position:relative}
+.step-num{font-family:var(--serif);font-size:3.5rem;font-weight:700;font-style:italic;color:rgba(232,57,74,.15);line-height:1;margin-bottom:.8rem}
+.step-icon{font-size:1.6rem;margin-bottom:.6rem}
+.step-title{font-family:var(--sans);font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
+.step-body{font-family:var(--serif);font-size:.88rem;color:var(--mid);line-height:1.7}
+.step-arrow{position:absolute;right:-12px;top:50%;transform:translateY(-50%);z-index:2;width:24px;height:24px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff}
+.step:last-child .step-arrow{display:none}
+
+/* ── ORDER SECTION ─────────────────────────────────── */
+.order-section{background:var(--bg);padding:6rem 3rem}
+.order-wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.order-left .sec-title{margin-bottom:.5rem}
+.price-badge{display:inline-flex;align-items:baseline;gap:.4rem;margin:1.5rem 0}
+.price-main{font-family:var(--serif);font-size:3.5rem;font-weight:700;font-style:italic;color:var(--red)}
+.price-sub{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;color:var(--mid)}
+.order-features{display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.order-feat{display:flex;gap:.7rem;align-items:center;font-family:var(--serif);font-size:.92rem;color:var(--mid)}
+.order-feat-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+
+/* Order form card */
+.order-form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;overflow:hidden}
+.order-form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--purple),var(--teal))}
+.form-title{font-family:var(--sans);font-size:1rem;font-weight:700;color:var(--white);margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.08em}
+.form-group{margin-bottom:1.1rem}
+.form-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);margin-bottom:.4rem;display:block}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem .9rem;font-family:var(--sans);font-size:.88rem;color:var(--white);transition:border-color .2s;outline:none}
+.form-input:focus{border-color:var(--red)}
+.form-input::placeholder{color:var(--dim)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+/* Colour picker */
+.colour-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.4rem}
+.colour-opt{width:100%;aspect-ratio:1;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:transform .2s,border-color .2s;position:relative}
+.colour-opt.selected{border-color:var(--white);transform:scale(1.12)}
+.colour-opt::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;opacity:0;transition:opacity .2s}
+.colour-opt.selected::after{opacity:1}
+/* Qty */
+.qty-wrap{display:flex;align-items:center;gap:.8rem}
+.qty-btn{width:32px;height:32px;border-radius:6px;background:var(--border);color:var(--white);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.qty-btn:hover{background:var(--red)}
+.qty-val{font-family:var(--mono);font-size:1rem;color:var(--white);min-width:24px;text-align:center}
+/* Submit */
+.submit-btn{width:100%;padding:1rem;background:var(--red);color:#fff;font-family:var(--sans);font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;border-radius:8px;margin-top:1.2rem;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.submit-btn:hover{background:var(--red2)}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn svg{width:16px;height:16px;fill:#fff}
+.order-note{font-family:var(--serif);font-size:.78rem;color:var(--dim);text-align:center;margin-top:.8rem;line-height:1.5}
+
+/* ── Success Toast ─────────────────────────────────── */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:999;background:var(--card);border:1px solid var(--teal);border-radius:12px;padding:1.2rem 1.6rem;max-width:320px;transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.toast.show{transform:translateY(0)}
+.toast-title{font-family:var(--sans);font-size:.88rem;font-weight:700;color:var(--teal);margin-bottom:.3rem}
+.toast-body{font-family:var(--serif);font-size:.82rem;color:var(--mid);line-height:1.5}
+
+/* ── Specs ─────────────────────────────────────────── */
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:2.5rem}
+.spec-table{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.spec-row{display:grid;grid-template-columns:1fr 1fr;padding:.85rem 1.2rem;border-bottom:1px solid var(--border);transition:background .2s}
+.spec-row:last-child{border-bottom:none}
+.spec-row:hover{background:rgba(255,255,255,.02)}
+.spec-key{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--mid);text-transform:uppercase}
+.spec-val{font-family:var(--serif);font-size:.92rem;color:var(--white);text-align:right}
+.spec-visual{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2.5rem;display:flex;flex-direction:column;gap:1rem}
+.spec-bar-row{display:flex;flex-direction:column;gap:.35rem}
+.spec-bar-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--mid)}
+.spec-bar-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.spec-bar-fill{height:100%;border-radius:2px;transition:width 1.5s ease}
+
+/* ── Footer ────────────────────────────────────────── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:3rem;text-align:center}
+.footer-logo{font-family:var(--serif);font-size:3rem;font-weight:700;font-style:italic;color:var(--dim);margin-bottom:.8rem}
+.footer-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--mid);text-transform:uppercase;margin-bottom:.5rem}
+.footer-copy{font-family:var(--serif);font-size:.8rem;color:var(--dim)}
+
+/* ── ADMIN PANEL ───────────────────────────────────── */
+.admin-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(7,8,13,.97);backdrop-filter:blur(20px);overflow-y:auto}
+.admin-overlay.active{display:block}
+.admin-wrap{max-width:1000px;margin:0 auto;padding:3rem 2rem}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.admin-title{font-family:var(--serif);font-size:2.2rem;font-weight:700;font-style:italic;color:var(--white)}
+.admin-title span{color:var(--red)}
+.admin-close{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem 1rem;border:1px solid var(--border);border-radius:4px;color:var(--mid);background:none;transition:all .2s}
+.admin-close:hover{border-color:var(--red);color:var(--red)}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.admin-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;text-align:center}
+.admin-stat-val{font-family:var(--serif);font-size:2.5rem;font-weight:700;font-style:italic;color:var(--red);line-height:1}
+.admin-stat-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-top:.3rem}
+.admin-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.admin-table-header{display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr 1.2fr 0.8fr;gap:1rem;padding:.8rem 1.2rem;background:var(--surface);border-bottom:1px solid var(--border)}
+.admin-th{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid)}
+.admin-empty{padding:3rem;text-align:center;font-family:var(--serif);font-size:1rem;color:var(--dim)}
+.admin-order-row{display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr 1.2fr 0.8fr;gap:1rem;padding:.9rem 1.2rem;border-bottom:1px solid var(--border);align-items:center;transition:background .2s}
+.admin-order-row:last-child{border-bottom:none}
+.admin-order-row:hover{background:rgba(255,255,255,.02)}
+.admin-cell{font-family:var(--serif);font-size:.88rem;color:var(--white)}
+.admin-cell.mono{font-family:var(--mono);font-size:.72rem;color:var(--mid)}
+.colour-dot{width:14px;height:14px;border-radius:3px;display:inline-block;margin-right:.4rem;vertical-align:middle}
+.status-badge{display:inline-block;padding:.2rem .6rem;border-radius:3px;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,201,177,.12);color:var(--teal);border:1px solid rgba(0,201,177,.25)}
+.admin-clear-btn{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid rgba(232,57,74,.3);border-radius:3px;color:var(--red);background:none;margin-top:1rem;transition:all .2s}
+.admin-clear-btn:hover{background:rgba(232,57,74,.1)}
+
+/* ── Animations ────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.reveal.on{opacity:1;transform:none}
+
+/* ── Password Modal ─────────────────────────────────── */
+.pw-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(7,8,13,.96);backdrop-filter:blur(24px);align-items:center;justify-content:center}
+.pw-overlay.active{display:flex}
+.pw-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;position:relative}
+.pw-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),var(--purple));border-radius:16px 16px 0 0}
+.pw-icon{font-size:2.2rem;margin-bottom:1rem}
+.pw-title{font-family:var(--serif);font-size:1.6rem;font-weight:700;font-style:italic;color:var(--white);margin-bottom:.3rem}
+.pw-sub{font-family:var(--serif);font-size:.88rem;color:var(--mid);margin-bottom:1.5rem}
+.pw-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-family:var(--mono);font-size:1rem;color:var(--white);text-align:center;letter-spacing:.15em;outline:none;transition:border-color .2s;margin-bottom:.8rem}
+.pw-input:focus{border-color:var(--red)}
+.pw-input::placeholder{letter-spacing:.05em;font-size:.78rem;color:var(--dim)}
+.pw-submit{width:100%;padding:.8rem;background:var(--red);color:#fff;font-family:var(--sans);font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;border-radius:8px;transition:background .2s}
+.pw-submit:hover{background:var(--red2)}
+.pw-error{font-family:var(--mono);font-size:.68rem;color:var(--red);margin-top:.6rem;display:none;letter-spacing:.05em}
+.pw-cancel{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);background:none;border:none;margin-top:.8rem;display:block;width:100%;cursor:pointer;transition:color .2s}
+.pw-cancel:hover{color:var(--mid)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Nav */
+  nav { padding: .85rem 1.2rem; }
+  .nav-links a:not(.nav-cta) { display: none; }
+  .nav-links { gap: 1rem; }
+
+  /* Hero */
+  .hero { padding: 0 1.4rem 4rem; }
+  .hero-title { font-size: clamp(3.8rem, 16vw, 6rem); }
+  .hero-slogan { font-size: clamp(1.1rem, 4vw, 1.5rem); }
+  .hero-sub { flex-direction: column; gap: .6rem; }
+  .hero-tag { display: none; }
+  .hero-scroll { right: 1.4rem; }
+  .hero-chips { gap: .35rem; }
+  .chip { font-size: .52rem; padding: .22rem .6rem; }
+
+  /* Sections */
+  .sec { padding: 3.5rem 1.4rem; }
+  .sec-full { padding: 3.5rem 0; }
+  .sec-full .inner { padding: 0 1.4rem; }
+  .sec-title { font-size: clamp(2rem, 8vw, 2.8rem); }
+
+  /* Features grid → single column */
+  .features-grid { grid-template-columns: 1fr; gap: 1rem; }
+
+  /* Steps → 2 columns on mobile */
+  .steps { grid-template-columns: 1fr 1fr; }
+  .step-arrow { display: none; }
+  .step { padding: 1.4rem 1.2rem; }
+  .step-num { font-size: 2.5rem; }
+
+  /* Order section */
+  .order-section { padding: 3.5rem 1.4rem; }
+  .order-wrap { grid-template-columns: 1fr; gap: 2rem; }
+  .price-main { font-size: 2.6rem; }
+
+  /* Form */
+  .form-row { grid-template-columns: 1fr; }
+  .colour-grid { grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+  .colour-opt { border-radius: 8px; }
+
+  /* Specs */
+  .specs-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+  /* Admin */
+  .admin-wrap { padding: 1.5rem 1rem; }
+  .admin-stats { grid-template-columns: 1fr 1fr 1fr; gap: .6rem; }
+  .admin-stat { padding: .9rem .6rem; }
+  .admin-stat-val { font-size: 1.8rem; }
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table-header { grid-template-columns: 1.8fr 1.2fr .9fr .6fr 1fr .7fr; gap: .5rem; padding: .7rem .8rem; }
+  .admin-order-row { grid-template-columns: 1.8fr 1.2fr .9fr .6fr 1fr .7fr; gap: .5rem; padding: .8rem .8rem; }
+  .admin-cell { font-size: .78rem; }
+  .admin-th { font-size: .52rem; }
+
+  /* Toast */
+  .toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
+
+  /* Password modal */
+  .pw-box { margin: 1rem; }
+
+  /* Footer */
+  footer { padding: 2rem 1.4rem; }
+  .footer-logo { font-size: 2rem; }
+}
+
+@media (max-width: 480px) {
+  /* Steps → single column on very small screens */
+  .steps { grid-template-columns: 1fr; }
+  .hero-title { font-size: clamp(3.2rem, 18vw, 5rem); }
+  .admin-stats { grid-template-columns: 1fr; }
+  .admin-table-header,
+  .admin-order-row { grid-template-columns: 1.5fr 1.2fr 1fr .5fr; }
+  /* Hide class and status columns on tiny screens */
+  .admin-th:nth-child(4),
+  .admin-th:nth-child(6),
+  .admin-order-row > div:nth-child(4),
+  .admin-order-row > div:nth-child(6) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 20 20"><path d="M4 3h3l5 7-5 7H4l5-7z"/><path d="M10 3h3l3 4.5L13 10l-3-4z" opacity=".55"/></svg>
+    </div>
+    <span class="nav-logo-text">KARDO</span>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#specs">Specs</a>
+    <a href="#order">Order</a>
+    <a href="#" onclick="openAdmin();return false;" class="nav-cta">Admin ⚙</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow1"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-noise"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Introducing — Smart Card Wallet</p>
+    <h1 class="hero-title"><em>KARDO</em></h1>
+    <p class="hero-slogan">Snap. Carry. Go.</p>
+    <div class="hero-sub" style="animation-delay:.65s">
+      <span class="hero-tag">3-in-1</span>
+      <p class="hero-desc">A 3D-printed modular card wallet that snaps to your phone, holds your cards with a pop-out button, and carries via lanyard. Built for Malaysian students.</p>
+    </div>
+    <div class="hero-chips" style="animation-delay:.8s">
+      <span class="chip">Phone Snap</span>
+      <span class="chip">Pop-Out Cards</span>
+      <span class="chip">Neck Lanyard</span>
+      <span class="chip">3–6 Cards</span>
+      <span class="chip">PLA Plastic</span>
+      <span class="chip">RM 29.99</span>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── FEATURES ──────────────────────────────────────── -->
+<section class="sec" id="features">
+  <p class="eyebrow reveal">What makes it different</p>
+  <h2 class="sec-title reveal">Built for how<br><em>students actually live</em></h2>
+  <div class="features-grid">
+    <div class="feat-card reveal">
+      <div class="feat-num">01</div>
+      <div class="feat-icon">🃏</div>
+      <div class="feat-title">Pop-Out Button</div>
+      <p class="feat-body">Press the side button and your cards fan out instantly. An angled internal ramp lifts your cards so you can see and pick whichever one you need — no digging around.</p>
+    </div>
+    <div class="feat-card reveal" style="transition-delay:.1s">
+      <div class="feat-num">02</div>
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Retention Lip Lock</div>
+      <p class="feat-body">Cards won't slip out on their own. Each slot has a precision retention lip — cards need a deliberate press to clear it. Safe in bags, pockets, anywhere.</p>
+    </div>
+    <div class="feat-card reveal" style="transition-delay:.2s">
+      <div class="feat-num">03</div>
+      <div class="feat-icon">🧲</div>
+      <div class="feat-title">Magnetic Phone Snap</div>
+      <p class="feat-body">Four embedded disc magnets on the back let KARDO snap securely to your phone or phone case. Works on any flat-backed device — no MagSafe required.</p>
+    </div>
+    <div class="feat-card reveal" style="transition-delay:.0s">
+      <div class="feat-num">04</div>
+      <div class="feat-icon">🪢</div>
+      <div class="feat-title">Neck Lanyard Ready</div>
+      <p class="feat-body">A reinforced lanyard hole at the top means you can wear KARDO around your neck — perfect for school events, labs, or anywhere your hands need to be free.</p>
+    </div>
+    <div class="feat-card reveal" style="transition-delay:.1s">
+      <div class="feat-num">05</div>
+      <div class="feat-icon">🎨</div>
+      <div class="feat-title">4 Colour Options</div>
+      <p class="feat-body">Choose from four clean colours — Black, White, Red, or Blue. Each unit is printed fresh to your order in your chosen colour.</p>
+    </div>
+    <div class="feat-card reveal" style="transition-delay:.2s">
+      <div class="feat-num">06</div>
+      <div class="feat-icon">💸</div>
+      <div class="feat-title">Student Priced</div>
+      <p class="feat-body">At RM 29.99, KARDO costs less than a bubble tea night out. It costs RM 8–10 to make, so every purchase directly supports our small student-run business.</p>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────── -->
+<section class="sec-full how-bg" id="how">
+  <div class="inner">
+    <p class="eyebrow teal reveal">Step by step</p>
+    <h2 class="sec-title reveal">How <em>KARDO</em> works</h2>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📱</div>
+        <div class="step-title">Snap to Phone</div>
+        <p class="step-body">Hold KARDO near the back of your phone. The 4 disc magnets snap it on instantly — secure, flat, and barely noticeable.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">👆</div>
+        <div class="step-title">Press the Button</div>
+        <p class="step-body">When you need a card, press the side button. The internal ramp fans your cards upward so you can see all of them at once.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🃏</div>
+        <div class="step-title">Pick Your Card</div>
+        <p class="step-body">Each card is visible and grippable. The retention lips hold all others in place while you remove just the one you need.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-icon">✅</div>
+        <div class="step-title">Snap Back & Go</div>
+        <p class="step-body">Slide your card back in — it clicks past the retention lip and stays secure. You're done. Walk away. KARDO handled it.</p>
+        <div class="step-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── ORDER SECTION ─────────────────────────────────── -->
+<section id="order" class="order-section">
+  <div class="order-wrap">
+    <!-- Left info -->
+    <div class="order-left reveal">
+      <p class="eyebrow gold">Order yours</p>
+      <h2 class="sec-title">Get your<br><em>KARDO</em> today</h2>
+      <div class="price-badge">
+        <span class="price-main">RM 29.99</span>
+        <span class="price-sub">/ unit · free delivery within school</span>
+      </div>
+      <div class="order-features">
+        <div class="order-feat"><div class="order-feat-dot"></div>Choose your colour — 4 options</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>Holds 3–6 cards + cash</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>Pop-out button mechanism</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>Magnetic phone snap (4 magnets)</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>Lanyard hole included</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>3D printed fresh to your order</div>
+        <div class="order-feat"><div class="order-feat-dot"></div>Ready in 3–5 school days</div>
+      </div>
+      <div style="font-family:var(--serif);font-size:.9rem;color:var(--dim);line-height:1.7;border-left:2px solid var(--border2);padding-left:1rem">
+        KARDO is a student business project by Hasan, Mishalni, Hashir, Yazan & Taisei from Icons International School. Every order is printed and assembled by us.
+      </div>
+    </div>
+
+    <!-- Right form -->
+    <div class="order-form-card reveal" style="transition-delay:.15s">
+      <div class="form-title">Customise & Order</div>
+
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" type="text" id="inp-name" placeholder="e.g. Ahmad Farid">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone / WhatsApp</label>
+          <input class="form-input" type="text" id="inp-phone" placeholder="e.g. 011-2345678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Class / Year</label>
+          <input class="form-input" type="text" id="inp-class" placeholder="e.g. Year 10A">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Choose Colour</label>
+        <div class="colour-grid" id="colour-grid">
+          <div class="colour-opt selected" data-colour="Black" data-hex="#1a1a1a" style="background:#1a1a1a;border-color:var(--border2)"></div>
+          <div class="colour-opt" data-colour="White" data-hex="#f0f0f0" style="background:#f0f0f0"></div>
+          <div class="colour-opt" data-colour="Red" data-hex="#E8394A" style="background:#E8394A"></div>
+          <div class="colour-opt" data-colour="Blue" data-hex="#2563EB" style="background:#2563EB"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--mid);margin-top:.5rem">Selected: <span id="colour-label" style="color:var(--white)">Black</span></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-val" id="qty-val">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+          <span style="font-family:var(--mono);font-size:.65rem;color:var(--mid);margin-left:.5rem">× RM 29.99 = <span id="total-price" style="color:var(--white)">RM 29.99</span></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Special Requests (optional)</label>
+        <input class="form-input" type="text" id="inp-notes" placeholder="e.g. gift wrapping, urgent, etc.">
+      </div>
+
+      <button class="submit-btn" onclick="submitOrder()">
+        <svg viewBox="0 0 20 20"><path d="M2 10.5l6 6L18 4"/></svg>
+        Place Order — <span id="btn-price">RM 29.99</span>
+      </button>
+      <p class="order-note">No payment now. We'll contact you via WhatsApp to confirm & arrange payment on delivery.</p>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ── SPECS ──────────────────────────────────────────── -->
+<section class="sec" id="specs">
+  <p class="eyebrow reveal">Technical details</p>
+  <h2 class="sec-title reveal">Built with <em>precision</em></h2>
+  <div class="specs-grid">
+    <div class="spec-table reveal">
+      <div class="spec-row"><span class="spec-key">Material</span><span class="spec-val">PLA Plastic</span></div>
+      <div class="spec-row"><span class="spec-key">Dimensions</span><span class="spec-val">88 × 62 × 14 mm</span></div>
+      <div class="spec-row"><span class="spec-key">Card capacity</span><span class="spec-val">3–6 cards</span></div>
+      <div class="spec-row"><span class="spec-key">Card slot thickness</span><span class="spec-val">0.9 mm each</span></div>
+      <div class="spec-row"><span class="spec-key">Magnet count</span><span class="spec-val">4 disc magnets</span></div>
+      <div class="spec-row"><span class="spec-key">Lanyard hole</span><span class="spec-val">5 mm diameter</span></div>
+      <div class="spec-row"><span class="spec-key">Ejector ramp angle</span><span class="spec-val">22°</span></div>
+      <div class="spec-row"><span class="spec-key">Print layer height</span><span class="spec-val">0.2 mm</span></div>
+      <div class="spec-row"><span class="spec-key">Infill</span><span class="spec-val">20–25%</span></div>
+      <div class="spec-row"><span class="spec-key">Unit cost</span><span class="spec-val">RM 8–10</span></div>
+      <div class="spec-row"><span class="spec-key">Selling price</span><span class="spec-val">RM 29.99</span></div>
+      <div class="spec-row"><span class="spec-key">Break-even units</span><span class="spec-val">~20 units</span></div>
+    </div>
+    <div class="spec-visual reveal" style="transition-delay:.15s">
+      <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;color:var(--mid);text-transform:uppercase;margin-bottom:.5rem">Performance ratings</div>
+      <div class="spec-bar-row">
+        <div class="spec-bar-label"><span>Durability</span><span>9/10</span></div>
+        <div class="spec-bar-track"><div class="spec-bar-fill" style="width:90%;background:var(--red)"></div></div>
+      </div>
+      <div class="spec-bar-row">
+        <div class="spec-bar-label"><span>Slim Profile</span><span>8.5/10</span></div>
+        <div class="spec-bar-track"><div class="spec-bar-fill" style="width:85%;background:var(--gold)"></div></div>
+      </div>
+      <div class="spec-bar-row">
+        <div class="spec-bar-label"><span>Ease of Use</span><span>9.5/10</span></div>
+        <div class="spec-bar-track"><div class="spec-bar-fill" style="width:95%;background:var(--teal)"></div></div>
+      </div>
+      <div class="spec-bar-row">
+        <div class="spec-bar-label"><span>Value for Money</span><span>9/10</span></div>
+        <div class="spec-bar-track"><div class="spec-bar-fill" style="width:90%;background:var(--purple)"></div></div>
+      </div>
+      <div class="spec-bar-row">
+        <div class="spec-bar-label"><span>Student Fit</span><span>10/10</span></div>
+        <div class="spec-bar-track"><div class="spec-bar-fill" style="width:100%;background:var(--red)"></div></div>
+      </div>
+      <div style="margin-top:1rem;padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;margin-bottom:.4rem">Market research finding</div>
+        <div style="font-family:var(--serif);font-size:.88rem;color:var(--mid);line-height:1.65">83% of students carry cards daily. 73% find wallets bulky. 67% said they'd buy KARDO at RM 25–35.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-top:.5rem">
+        <div style="text-align:center;padding:.8rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700;font-style:italic;color:var(--red)">83%</div>
+          <div style="font-family:var(--mono);font-size:.55rem;letter-spacing:.06em;color:var(--mid);text-transform:uppercase;margin-top:.2rem">Carry cards</div>
+        </div>
+        <div style="text-align:center;padding:.8rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700;font-style:italic;color:var(--teal)">73%</div>
+          <div style="font-family:var(--mono);font-size:.55rem;letter-spacing:.06em;color:var(--mid);text-transform:uppercase;margin-top:.2rem">Find wallets bulky</div>
+        </div>
+        <div style="text-align:center;padding:.8rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700;font-style:italic;color:var(--gold)">67%</div>
+          <div style="font-family:var(--mono);font-size:.55rem;letter-spacing:.06em;color:var(--mid);text-transform:uppercase;margin-top:.2rem">Would buy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">KARDO</div>
+  <div class="footer-tag">Snap · Carry · Go — "Carry more, do more"</div>
+  <p class="footer-copy">A student business project · Icons International School · Hasan, Mishalni, Hashir, Yazan & Taisei</p>
+</footer>
+
+<!-- ── TOAST ──────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <div class="toast-title">✅ Order Received!</div>
+  <div class="toast-body" id="toast-body">Thank you! We'll WhatsApp you soon to confirm.</div>
+</div>
+
+
+<!-- ── PASSWORD MODAL ────────────────────────────────── -->
+<div class="pw-overlay" id="pw-modal">
+  <div class="pw-box" id="pw-box">
+    <div class="pw-icon">🔐</div>
+    <div class="pw-title">Owner Access</div>
+    <div class="pw-sub">Enter the admin password to view orders</div>
+    <input class="pw-input" type="password" id="pw-input" placeholder="Enter password" 
+      onkeydown="if(event.key==='Enter')submitPassword()">
+    <button class="pw-submit" onclick="submitPassword()">Unlock Dashboard</button>
+    <div class="pw-error" id="pw-error">❌ Incorrect password. Try again.</div>
+    <button class="pw-cancel" onclick="closePwModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ────────────────────────────────────── -->
+<div class="admin-overlay" id="admin">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--red);text-transform:uppercase;margin-bottom:.3rem">Owner Dashboard</div>
+        <div class="admin-title">KARDO <span>Orders</span></div>
+      </div>
+      <button class="admin-close" onclick="closeAdmin()">✕ Close</button>
+    </div>
+
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat-val" id="stat-orders">0</div>
+        <div class="admin-stat-label">Total Orders</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-val" id="stat-units">0</div>
+        <div class="admin-stat-label">Units Ordered</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-val" id="stat-revenue">RM 0</div>
+        <div class="admin-stat-label">Total Revenue</div>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <div class="admin-table-header">
+        <div class="admin-th">Customer</div>
+        <div class="admin-th">Contact</div>
+        <div class="admin-th">Colour</div>
+        <div class="admin-th">Qty</div>
+        <div class="admin-th">Total</div>
+        <div class="admin-th">Status</div>
+      </div>
+      <div id="admin-rows">
+        <div class="admin-empty">No orders yet. Share the website and orders will appear here! 🚀</div>
+      </div>
+    </div>
+    <button class="admin-clear-btn" onclick="clearOrders()">🗑 Clear all orders</button>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────
+let qty = 1;
+let selectedColour = { name: 'Black', hex: '#1a1a1a' };
+const PRICE = 29.99;
+
+// ── Colour picker ──────────────────────────────────────
+document.querySelectorAll('.colour-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.colour-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedColour = { name: opt.dataset.colour, hex: opt.dataset.hex };
+    document.getElementById('colour-label').textContent = opt.dataset.colour;
+  });
+});
+
+// ── Quantity ───────────────────────────────────────────
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qty-val').textContent = qty;
+  const total = (qty * PRICE).toFixed(2);
+  document.getElementById('total-price').textContent = 'RM ' + total;
+  document.getElementById('btn-price').textContent = 'RM ' + total;
+}
+
+// ── Order submission ───────────────────────────────────
+function submitOrder() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const cls   = document.getElementById('inp-class').value.trim();
+  const notes = document.getElementById('inp-notes').value.trim();
+
+  if (!name)  { alert('Please enter your name!'); return; }
+  if (!phone) { alert('Please enter your phone number!'); return; }
+
+  const order = {
+    id: 'KDO-' + Date.now().toString(36).toUpperCase(),
+    name, phone, cls, notes,
+    colour: selectedColour.name,
+    colourHex: selectedColour.hex,
+    qty,
+    total: (qty * PRICE).toFixed(2),
+    time: new Date().toLocaleString('en-MY', { dateStyle: 'medium', timeStyle: 'short' }),
+    status: 'New'
+  };
+
+  // Save to localStorage
+  const orders = JSON.parse(localStorage.getItem('kardo_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('kardo_orders', JSON.stringify(orders));
+
+  // Show toast
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-body').textContent =
+    `Hi ${name}! Your ${qty}x ${selectedColour.name} KARDO (RM ${order.total}) is confirmed. We'll WhatsApp ${phone} soon!`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5000);
+
+  // Reset form
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-class').value = '';
+  document.getElementById('inp-notes').value = '';
+  qty = 1;
+  changeQty(0);
+}
+
+// ── Admin panel ────────────────────────────────────────
+function openAdmin() {
+  document.getElementById('pw-modal').classList.add('active');
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+
+function submitPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === 'YaHaMiHa') {
+    document.getElementById('pw-modal').classList.remove('active');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').style.display = 'none';
+    document.getElementById('admin').classList.add('active');
+    renderAdmin();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+    const box = document.getElementById('pw-box');
+    box.style.animation = 'none';
+    box.offsetHeight; // reflow
+    box.style.animation = 'shake .4s ease';
+  }
+}
+
+function closePwModal() {
+  document.getElementById('pw-modal').classList.remove('active');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+}
+
+function closeAdmin() {
+  document.getElementById('admin').classList.remove('active');
+}
+
+function renderAdmin() {
+  const orders = JSON.parse(localStorage.getItem('kardo_orders') || '[]');
+  const totalUnits = orders.reduce((s, o) => s + o.qty, 0);
+  const totalRev = orders.reduce((s, o) => s + parseFloat(o.total), 0);
+
+  document.getElementById('stat-orders').textContent = orders.length;
+  document.getElementById('stat-units').textContent = totalUnits;
+  document.getElementById('stat-revenue').textContent = 'RM ' + totalRev.toFixed(2);
+
+  const container = document.getElementById('admin-rows');
+  if (orders.length === 0) {
+    container.innerHTML = '<div class="admin-empty">No orders yet. Share the website and orders will appear here! 🚀</div>';
+    return;
+  }
+
+  container.innerHTML = orders.map(o => `
+    <div class="admin-order-row">
+      <div>
+        <div class="admin-cell" style="font-weight:600">${o.name}</div>
+        <div class="admin-cell mono">${o.cls || '—'} · ${o.id}</div>
+      </div>
+      <div class="admin-cell mono">${o.phone}</div>
+      <div class="admin-cell">
+        <span class="colour-dot" style="background:${o.colourHex}"></span>${o.colour}
+      </div>
+      <div class="admin-cell" style="font-family:var(--mono);font-size:.85rem">${o.qty}×</div>
+      <div class="admin-cell" style="color:var(--gold);font-family:var(--mono)">RM ${o.total}</div>
+      <div><span class="status-badge">New</span></div>
+    </div>
+  `).join('');
+}
+
+function clearOrders() {
+  if (confirm('Clear all orders? This cannot be undone.')) {
+    localStorage.removeItem('kardo_orders');
+    renderAdmin();
+  }
+}
+
+// ── Scroll reveal ──────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
